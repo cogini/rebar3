@@ -78,6 +78,7 @@
          reread_config/1, reread_config/2,
          get_proxy_auth/0,
          is_list_of_strings/1,
+         config_ssl_opts/1,
          ssl_opts/1]).
 
 
@@ -1120,14 +1121,24 @@ ssl_opts(ssl_verify_enabled, Url) ->
     case check_ssl_version() of
         true ->
             CACerts = get_cacerts(),
-            SslOpts = [{verify, verify_peer}, {depth, 10}, {cacerts, CACerts},
-                       {partial_chain, fun partial_chain/1}],
+            SslOpts = proplists:compact(config_ssl_opts(), [{verify, verify_peer}, {depth, 10}, {cacerts, CACerts},
+                       {partial_chain, fun partial_chain/1}]),
             check_hostname_opt(Url, SslOpts);
         false ->
             ?WARN("Insecure HTTPS request (peer verification disabled), "
                   "please update to OTP 17.4 or later", []),
-            [{verify, verify_none}]
+            proplists:compact(config_ssl_opts(), [{verify, verify_none}])
     end.
+
+%%------------------------------------------------------------------------------
+%% @doc
+%% Get ssl opts from rebar.config file.
+%% @end
+%%------------------------------------------------------------------------------
+config_ssl_opts() ->
+    GlobalConfigFile = rebar_dir:global_config(),
+    Config = rebar_config:consult_file(GlobalConfigFile),
+    proplists:get_value(ssl_options, Config, []).
 
 check_hostname_opt(_, Opts) ->
     MatchFun = public_key:pkix_verify_hostname_match_fun(https),
