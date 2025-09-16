@@ -78,7 +78,7 @@
          reread_config/1, reread_config/2,
          get_proxy_auth/0,
          is_list_of_strings/1,
-         config_ssl_opts/1,
+         config_ssl_opts/0,
          ssl_opts/1]).
 
 
