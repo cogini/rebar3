@@ -1138,7 +1138,7 @@ ssl_opts(ssl_verify_enabled, Url) ->
 config_ssl_opts() ->
     GlobalConfigFile = rebar_dir:global_config(),
     Config = rebar_config:consult_file(GlobalConfigFile),
-    ?DEBUG("config_ssl_opts config: ~p", [Config]),
+    % ?DEBUG("config_ssl_opts config: ~p", [Config]),
     SslOpts = proplists:get_value(ssl_options, Config, []),
     ?DEBUG("ssl_options from ~s: ~p", [GlobalConfigFile, SslOpts]),
     SslOpts.
