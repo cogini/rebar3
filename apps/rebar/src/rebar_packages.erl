@@ -245,8 +245,7 @@ update_package(Name, RepoConfig=#{name := Repo}, State) ->
     ?MODULE:verify_table(State),
     ?DEBUG("Getting definition for package ~ts from repo ~ts",
            [Name, rebar_hex_repos:format_repo(RepoConfig)]),
-    % try r3_hex_repo:get_package(get_package_repo_config(RepoConfig), Name) of
-    case r3_hex_repo:get_package(get_package_repo_config(RepoConfig), Name) of
+    try r3_hex_repo:get_package(get_package_repo_config(RepoConfig), Name) of
         {ok, {200, _Headers, Package}} ->
             #{releases := Releases} = Package,
             _ = insert_releases(Name, Releases, Repo, ?PACKAGE_TABLE),
@@ -265,10 +264,10 @@ update_package(Name, RepoConfig=#{name := Repo}, State) ->
             %% TODO: add better log message. r3_hex_core should export a format_error
             ?WARN("Failed to update package ~ts from repo ~ts", [Name, Repo]),
             fail
-    % catch
-    %     _:Exception ->
-    %         ?DEBUG("hex_repo:get_package failed for package ~p: ~p", [Name, Exception]),
-    %         fail
+    catch
+        _:Exception ->
+            ?DEBUG("hex_repo:get_package failed for package ~p: ~p", [Name, Exception]),
+            fail
     end.
 
 get_package_repo_config(RepoConfig=#{mirror_of := _}) ->
