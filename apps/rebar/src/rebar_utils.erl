@@ -1149,15 +1149,13 @@ ssl_opts(MiddleboxCompMode, Url) ->
     case check_ssl_version() of
         true ->
             CACerts = get_cacerts(),
-            SslOpts = proplists:compact(config_ssl_opts(),
-                                        [{verify, verify_peer}, {depth, 10}, {cacerts, CACerts},
-                                         {partial_chain, fun partial_chain/1},
-                                         {middlebox_comp_mode, MiddleboxCompMode == middlebox_comp_mode_enabled}]),
+            SslOpts = proplists:compact(config_ssl_opts() ++ [{verify, verify_peer}, {depth, 10}, {cacerts, CACerts},
+                       {partial_chain, fun partial_chain/1}, {middlebox_comp_mode, MiddleboxCompMode == middlebox_comp_mode_enabled}]),
             check_hostname_opt(Url, SslOpts);
         false ->
             ?WARN("Insecure HTTPS request (peer verification disabled), "
                   "please update to OTP 17.4 or later", []),
-            proplists:compact(config_ssl_opts(), [{verify, verify_none}])
+            proplists:compact(config_ssl_opts() ++ [{verify, verify_none}])
     end.
 
 %%------------------------------------------------------------------------------
