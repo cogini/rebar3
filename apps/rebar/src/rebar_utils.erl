@@ -1138,7 +1138,10 @@ ssl_opts(ssl_verify_enabled, Url) ->
 config_ssl_opts() ->
     GlobalConfigFile = rebar_dir:global_config(),
     Config = rebar_config:consult_file(GlobalConfigFile),
-    proplists:get_value(ssl_options, Config, []).
+    ?DEBUG("config_ssl_opts config: ~p", [Config]),
+    SslOpts = proplists:get_value(ssl_options, Config, []),
+    ?DEBUG("ssl_options from ~s: ~p", [GlobalConfigFile, SslOpts]),
+    SslOpts.
 
 check_hostname_opt(_, Opts) ->
     MatchFun = public_key:pkix_verify_hostname_match_fun(https),
