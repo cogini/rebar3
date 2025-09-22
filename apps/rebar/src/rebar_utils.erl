@@ -1121,7 +1121,7 @@ ssl_opts(ssl_verify_enabled, Url) ->
     case check_ssl_version() of
         true ->
             CACerts = get_cacerts(),
-            SslOpts = proplists:compact(config_ssl_opts(), [{verify, verify_peer}, {depth, 10}, {cacerts, CACerts},
+            SslOpts = proplists:compact(config_ssl_opts() ++ [{verify, verify_peer}, {depth, 10}, {cacerts, CACerts},
                        {partial_chain, fun partial_chain/1}]),
             check_hostname_opt(Url, SslOpts);
         false ->
